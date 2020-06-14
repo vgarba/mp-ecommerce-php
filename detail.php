@@ -1,3 +1,71 @@
+<?php
+// SDK de Mercado Pago
+require __DIR__ .  '/vendor/autoload.php';
+
+// Agrega credenciales
+MercadoPago\SDK::setAccessToken('APP_USR-6317427424180639-042414-47e969706991d3a442922b0702a0da44-469485398');
+MercadoPago\SDK::setIntegratorId('dev_24c65fb163bf11ea96500242ac130004');
+
+
+// Crea un objeto de preferencia
+$preference = new MercadoPago\Preference();
+
+// Crea un ítem en la preferencia
+$item = new MercadoPago\Item();
+$item->img = $_POST['img'];
+$item->title = $_POST['title'];
+$item->description = "Dispositivo móvil de Tienda e-commerce";
+$item->unit_price = $_POST['price'];
+$item->picture_url = 'https://vgarba-mp-commerce-php.herokuapp.com/'.$_POST['img'];
+$item->quantity = $_POST['unit'];
+$item->unit_price = $_POST['price'];
+$preference->external_reference = "vgarba@gmail.com";
+$preference->items = array($item);
+
+// Creo un comprador en la preferencia
+  $payer = new MercadoPago\Payer();
+  $payer->name = "Lalo";
+  $payer->surname = "Landa";
+  $payer->email = "test_user_63274575@testuser.com";
+  $payer->date_created = new DtaTime();
+  $payer->phone = array(
+    "area_code" => "11",
+    "number" => "2222 33333"
+  );
+  $payer->identification = array(
+    "type" => "DNI",
+    "number" => "12345678"
+  );
+  $payer->address = array(
+    "street_name" => "False",
+    "street_number" => 123,
+    "zip_code" => "1111"
+  );
+
+// Creo url de retorno en la preferencia
+$preference->back_urls = array(
+    "success" => "https://vgarba-mp-commerce-php.herokuapp.com/success.php",
+    "failure" => "https://vgarba-mp-commerce-php.herokuapp.com/failure.php",
+    "pending" => "https://vgarba-mp-commerce-php.herokuapp.com/pending.php"
+);
+$preference->auto_return = "approved";
+
+// Creo metodos de pago en la preferencia
+$preference->payment_methods = array(
+  "excluded_payment_methods" => array(
+    array("id" => "amex")
+  ),
+  "excluded_payment_types" => array(
+    array("id" => "atm")
+  ),
+  "installments" => 6
+);
+
+$preference->save();
+echo $preference->init_point;
+?>
+
+
 <!DOCTYPE html>
 <html class="supports-animation supports-columns svg no-touch no-ie no-oldie no-ios supports-backdrop-filter as-mouseuser" lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
@@ -11,6 +79,13 @@
     src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
     crossorigin="anonymous"></script>
+<!--script de seguridad MP-->
+    <script src="https://www.mercadopago.com/v2/security.js" view="home"></script>
+
+    <!-- fin script de seguridad MP-->
+<!--script de token de pago MP para enviar datos de tarjeta al backend-->
+    <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
+ <!--fin script de token de pago-->
 
     <link rel="stylesheet" href="./assets/category-landing.css" media="screen, print">
 
@@ -42,6 +117,8 @@
 
 
 <body class="as-theme-light-heroimage">
+
+    
 
     <div class="stack">
         
@@ -130,7 +207,14 @@
                                             <?php echo "$" . $_POST['unit'] ?>
                                         </h3>
                                     </div>
-                                    <button type="submit" class="mercadopago-button" formmethod="post">Pagar</button>
+
+                                    <a href="<?php echo $preference->init_point; ?>"><button type="submit" class="mercadopago-button" formmethod="post">Pagar la compra</button></a>
+<!--<form action="/procesar-pago" method="POST">
+  <script
+   src="https://www.mercadopago.com.ar/integrations/v1/web-payment-checkout.js"
+   data-preference-id="<?php echo $preference->id; ?>">
+  </script>
+</form>-->
                                 </div>
                             </div>
                         </div>
