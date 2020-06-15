@@ -16,7 +16,6 @@ $site_id = $_GET['site_id'];
 $processing_mode = $_GET['processing_mode'];
 $merchant_accound_id = $_GET['merchant_account_id'];
 
-$payment_method_id = $_GET['payment_method_id'];
 $data = MercadoPago\Payment::find_by_id($collection_id);
 //var_dump($data);
 

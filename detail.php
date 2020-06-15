@@ -12,14 +12,14 @@ $preference = new MercadoPago\Preference();
 
 // Crea un ítem en la preferencia
 $item = new MercadoPago\Item();
-$item->img = $_POST['img'];
+$item->id = "1234";
 $item->title = $_POST['title'];
 $item->description = "Dispositivo móvil de Tienda e-commerce";
+$item->currency_id = "ARS";
 $item->unit_price = $_POST['price'];
 $item->picture_url = 'https://vgarba-mp-commerce-php.herokuapp.com/'.$_POST['img'];
 $item->quantity = $_POST['unit'];
 $item->unit_price = $_POST['price'];
-$preference->external_reference = "vgarba@gmail.com";
 $preference->items = array($item);
 
 // Creo un comprador en la preferencia
@@ -27,7 +27,7 @@ $preference->items = array($item);
   $payer->name = "Lalo";
   $payer->surname = "Landa";
   $payer->email = "test_user_63274575@testuser.com";
-  $payer->date_created = new DtaTime();
+  $payer->date_created = new DateTime();
   $payer->phone = array(
     "area_code" => "11",
     "number" => "2222 33333"
@@ -41,6 +41,7 @@ $preference->items = array($item);
     "street_number" => 123,
     "zip_code" => "1111"
   );
+  $preference->payer = $payer;
 
 // Creo url de retorno en la preferencia
 $preference->back_urls = array(
@@ -48,7 +49,9 @@ $preference->back_urls = array(
     "failure" => "https://vgarba-mp-commerce-php.herokuapp.com/failure.php",
     "pending" => "https://vgarba-mp-commerce-php.herokuapp.com/pending.php"
 );
+$preference->notification_url = "https://vgarba-mp-commerce-php.herokuapp.com/ipn.php";
 $preference->auto_return = "approved";
+$preference->external_reference = "vgarba@gmail.com";
 
 // Creo metodos de pago en la preferencia
 $preference->payment_methods = array(
@@ -212,7 +215,7 @@ echo $preference->init_point;
 <!--<form action="/procesar-pago" method="POST">
   <script
    src="https://www.mercadopago.com.ar/integrations/v1/web-payment-checkout.js"
-   data-preference-id="<?php echo $preference->id; ?>">
+   data-preference-id="<?php echo $preference->init_point; ?>">
   </script>
 </form>-->
                                 </div>
